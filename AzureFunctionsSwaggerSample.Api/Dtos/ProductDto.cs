@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace AzureFunctionsSwaggerSample.Api.Entities
+namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
-  public sealed class ProductEntity
+  public sealed class ProductDto
   {
     public Guid ProductId { get; set; }
 
@@ -12,6 +12,6 @@ namespace AzureFunctionsSwaggerSample.Api.Entities
 
     public float PricePerUnit { get; set; }
 
-    public ProductUnitEntity Unit { get; set; }
+    public ProductUnitDto Unit { get; set; }
   }
 }

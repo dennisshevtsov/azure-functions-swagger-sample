@@ -1,15 +1,15 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-
-using AzureFunctionsSwaggerSample.Api.Entities;
-using AzureFunctionsSwaggerSample.Api.Services;
-
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
+  using System;
+  using System.Threading;
+  using System.Threading.Tasks;
+
+  using Microsoft.AspNetCore.Http;
+  using Microsoft.Azure.WebJobs;
+
+  using AzureFunctionsSwaggerSample.Api.Dtos;
+  using AzureFunctionsSwaggerSample.Api.Services;
+
   public sealed class GetProductFunction
   {
     private readonly IProductService _productService;
@@ -18,7 +18,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       => _productService = productService ?? throw new ArgumentNullException(nameof(productService));
 
     [FunctionName(nameof(GetProductFunction))]
-    public async Task<ProductEntity> RunAsync(
+    public async Task<ProductDto> RunAsync(
       [HttpTrigger("get", Route = "product/{productId}")] HttpRequest request,
       Guid productId,
       CancellationToken cancellationToken)

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace AzureFunctionsSwaggerSample.Api.Entities
+namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
-  public sealed class ProductUnitEntity
+  public sealed class ProductUnitDto
   {
     public Guid UnitId { get; set; }
 

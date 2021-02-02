@@ -7,16 +7,16 @@ namespace AzureFunctionsSwaggerSample.Api.Services
   using System.Threading;
   using System.Threading.Tasks;
 
-  using AzureFunctionsSwaggerSample.Api.Entities;
+  using AzureFunctionsSwaggerSample.Api.Dtos;
 
   public interface IProductService
   {
-    public Task<ProductEntity> GetProductAsync(Guid productId, CancellationToken cancellationToken);
+    public Task<ProductDto> GetProductAsync(Guid productId, CancellationToken cancellationToken);
 
-    public Task<IEnumerable<ProductEntity>> GetProductsAsync(CancellationToken cancellationToken);
+    public Task<IEnumerable<ProductDto>> GetProductsAsync(CancellationToken cancellationToken);
 
-    public Task<ProductEntity> CreateProductAsync(ProductEntity productEntity, CancellationToken cancellationToken);
+    public Task<ProductDto> CreateProductAsync(ProductDto productEntity, CancellationToken cancellationToken);
 
-    public Task<ProductEntity> UpdateProductAsync(ProductEntity productEntity, CancellationToken cancellationToken);
+    public Task<ProductDto> UpdateProductAsync(ProductDto productEntity, CancellationToken cancellationToken);
   }
 }
