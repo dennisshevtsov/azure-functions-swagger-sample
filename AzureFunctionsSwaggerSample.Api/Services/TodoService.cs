@@ -6,6 +6,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
 
@@ -25,12 +26,41 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 
     public Task<GetTodoListResponseDto> GetTodoListAsync(Guid todoListId, CancellationToken cancellationToken)
     {
-      throw new NotImplementedException();
+      GetTodoListResponseDto reponseDto = null;
+
+      if (_todoListDictionary.TryGetValue(todoListId, out var todoListDocument))
+      {
+        reponseDto = new GetTodoListResponseDto
+        {
+          TodoListId = todoListDocument.TodoListId,
+          Title = todoListDocument.Title,
+          Description = todoListDocument.Description,
+          Tasks = todoListDocument.Tasks.Select(document => new GetTodoListTaskResponseDto
+          {
+            TaskId = document.TaskId,
+            Title = document.Title,
+            Description = document.Description,
+            Deadline = document.Deadline,
+            Done = document.Done,
+          }),
+        };
+      }
+
+      return Task.FromResult(reponseDto);
     }
 
     public Task<GetTodoListsResponseDto> GetTodoListsAsync(CancellationToken cancellationToken)
     {
-      throw new NotImplementedException();
+      var responseDto = new GetTodoListsResponseDto
+      {
+        Items = _todoListDictionary.Select(document => new GetTodoListsItemResponseDto
+        {
+          TodoListId = document.Key,
+          Title = document.Value.Title,
+        }),
+      };
+
+      return Task.FromResult(responseDto);
     }
 
     public Task<CreateTodoListResponseDto> CreateTodoListAsync(CreateTodoListRequestDto command, CancellationToken cancellationToken)
@@ -58,17 +88,55 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 
     public Task UpdateProductAsync(UpdateTodoListRequestDto command, CancellationToken cancellationToken)
     {
-      throw new NotImplementedException();
+      if (_todoListDictionary.TryGetValue(command.TodoListId, out var todoListDocument))
+      {
+        todoListDocument.Title = command.Title;
+        todoListDocument.Description = command.Description;
+      }
+
+      throw new Exception();
     }
 
     public Task<CreateTodoListTaskResponseDto> CreateTodoListTaskAsync(CreateTodoListTaskRequestDto command, CancellationToken cancellationToken)
     {
-      throw new NotImplementedException();
+      if (!_todoListTaskDictionary.TryGetValue(command.TodoListId, out var todoListTaskDocuments))
+      {
+        throw new Exception();
+      }
+
+      var todoListTaskDocument = new TodoListTaskDocument
+      {
+        TaskId = Guid.NewGuid(),
+        Title = command.Title,
+        Description = command.Description,
+        Deadline = command.Deadline,
+      };
+
+      todoListTaskDocuments.Add(todoListTaskDocument);
+
+      var responseDto = new CreateTodoListTaskResponseDto
+      {
+        TaskId = todoListTaskDocument.TaskId,
+      };
+
+      return Task.FromResult(responseDto);
     }
 
     public Task CompleteTodoListTaskAsync(CompleteTodoListTaskRequestDto command, CancellationToken cancellationToken)
     {
-      throw new NotImplementedException();
+      if (_todoListTaskDictionary.TryGetValue(command.TodoListId, out var todoListTaskDocuments))
+      {
+        var todoListTaskDocument = todoListTaskDocuments.FirstOrDefault(document => document.TaskId == command.TaskId);
+
+        if (todoListTaskDocument != null)
+        {
+          todoListTaskDocument.Done = true;
+
+          return Task.CompletedTask;
+        }
+      }
+
+      throw new Exception();
     }
   }
 }
