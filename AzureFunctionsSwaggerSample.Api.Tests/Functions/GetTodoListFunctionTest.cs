@@ -19,6 +19,8 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     [TestInitialize]
     public void Initialize()
     {
+      _todoServiceMock = new Mock<ITodoService>();
+      _function = new GetTodoListFunction(_todoServiceMock.Object);
     }
 
     [TestMethod]

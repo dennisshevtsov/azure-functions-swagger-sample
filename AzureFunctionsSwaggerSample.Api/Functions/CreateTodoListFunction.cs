@@ -5,7 +5,6 @@
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
   using System;
-  using System.Text.Json;
   using System.Threading;
   using System.Threading.Tasks;
 
@@ -18,22 +17,23 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   public sealed class CreateTodoListFunction
   {
     private readonly ITodoService _todoService;
+    private readonly ISerializationService _serializationService;
 
-    public CreateTodoListFunction(ITodoService todoService)
-      => _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
+    public CreateTodoListFunction(
+      ITodoService todoService,
+      ISerializationService serializationService)
+    {
+      _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
+      _serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
+    }
 
     [FunctionName(nameof(CreateTodoListFunction))]
     public async Task<CreateTodoListResponseDto> RunAsync(
       [HttpTrigger("post", Route = "todo")] HttpRequest request,
       CancellationToken cancellationToken)
     {
-      var command = await JsonSerializer.DeserializeAsync<CreateTodoListRequestDto>(
-        request.Body,
-        new JsonSerializerOptions
-        {
-          PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        },
-        cancellationToken);
+      var command = await _serializationService.DeserializeAsync<CreateTodoListRequestDto>(
+        request.Body, cancellationToken);
 
       return await _todoService.CreateTodoListAsync(command, cancellationToken);
     }

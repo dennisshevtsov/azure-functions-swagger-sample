@@ -14,11 +14,16 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   public sealed class CompleteTodoListTaskFunctionTest
   {
     private Mock<ITodoService> _todoServiceMock;
+    private Mock<ISerializationService> _serializationServiceMock;
     private CompleteTodoListTaskFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
+      _todoServiceMock = new Mock<ITodoService>();
+      _serializationServiceMock = new Mock<ISerializationService>();
+      _function = new CompleteTodoListTaskFunction(
+        _todoServiceMock.Object, _serializationServiceMock.Object);
     }
 
     [TestMethod]
