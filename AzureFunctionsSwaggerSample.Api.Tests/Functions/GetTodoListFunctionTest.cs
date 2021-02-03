@@ -5,10 +5,17 @@
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
   using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Moq;
+
+  using AzureFunctionsSwaggerSample.Api.Functions;
+  using AzureFunctionsSwaggerSample.Api.Services;
 
   [TestClass]
   public sealed class GetTodoListFunctionTest
   {
+    private Mock<ITodoService> _todoServiceMock;
+    private GetTodoListFunction _function;
+
     [TestInitialize]
     public void Initialize()
     {

@@ -6,12 +6,17 @@ namespace AzureFunctionsSwaggerSample.Api.Tests
 {
   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+  using AzureFunctionsSwaggerSample.Api.Services;
+
   [TestClass]
   public sealed class TodoServiceTest
   {
+    private TodoService _todoService;
+
     [TestInitialize]
     public void Initialize()
     {
+      _todoService = new TodoService();
     }
 
     [TestMethod]
