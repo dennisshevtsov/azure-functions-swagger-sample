@@ -132,11 +132,10 @@ namespace AzureFunctionsSwaggerSample.Api.Services
         {
           todoListTaskDocument.Done = true;
 
-          return Task.CompletedTask;
         }
       }
 
-      throw new Exception();
+      return Task.CompletedTask;
     }
   }
 }
