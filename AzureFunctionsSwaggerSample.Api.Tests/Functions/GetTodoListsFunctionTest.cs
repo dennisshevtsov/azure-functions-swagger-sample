@@ -28,8 +28,13 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     }
 
     [TestMethod]
-    public void Test()
+    public async Task Test()
     {
+      var httpRequestMock = new Mock<HttpRequest>();
+
+      await _function.ExecuteAsync(httpRequestMock.Object, CancellationToken.None);
+
+      _todoServiceMock.Verify(service => service.GetTodoListsAsync(It.IsAny<CancellationToken>()));
     }
   }
 }

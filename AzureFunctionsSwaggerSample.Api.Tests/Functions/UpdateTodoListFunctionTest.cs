@@ -53,7 +53,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
                         return Task.CompletedTask;
                       });
 
-      await _function.RunAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
+      await _function.ExecuteAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<UpdateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
       _todoServiceMock.Verify(service => service.UpdateProductAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()));

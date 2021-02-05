@@ -4,6 +4,7 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
+  using System;
   using System.Threading;
   using System.Threading.Tasks;
 
@@ -28,8 +29,14 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     }
 
     [TestMethod]
-    public void Test()
+    public async Task Test()
     {
+      var todoListId = Guid.NewGuid();
+      var httpRequestMock = new Mock<HttpRequest>();
+
+      await _function.ExecuteAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
+
+      _todoServiceMock.Verify(service => service.GetTodoListAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()));
     }
   }
 }

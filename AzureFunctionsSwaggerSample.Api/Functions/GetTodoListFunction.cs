@@ -22,7 +22,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       => _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
 
     [FunctionName(nameof(GetTodoListFunction))]
-    public async Task<GetTodoListResponseDto> RunAsync(
+    public async Task<GetTodoListResponseDto> ExecuteAsync(
       [HttpTrigger("get", Route = "todo/{todoListId}")] HttpRequest request,
       Guid todoListId,
       CancellationToken cancellationToken)

@@ -37,7 +37,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     {
       var httpRequestMock = new Mock<HttpRequest>();
 
-      await _function.RunAsync(httpRequestMock.Object, CancellationToken.None);
+      await _function.ExecuteAsync(httpRequestMock.Object, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
       _todoServiceMock.Verify(service => service.CreateTodoListAsync(It.IsAny<CreateTodoListRequestDto>(), It.IsAny<CancellationToken>()));

@@ -28,7 +28,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     }
 
     [FunctionName(nameof(CompleteTodoListTaskFunction))]
-    public async Task RunAsync(
+    public async Task ExecuteAsync(
       [HttpTrigger("post", Route = "todo/{todoListId}/task/{taskId}/complete")] HttpRequest request,
       Guid todoListId,
       Guid taskId,

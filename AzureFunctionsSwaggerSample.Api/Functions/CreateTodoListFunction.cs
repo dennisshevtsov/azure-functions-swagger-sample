@@ -28,7 +28,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     }
 
     [FunctionName(nameof(CreateTodoListFunction))]
-    public async Task<CreateTodoListResponseDto> RunAsync(
+    public async Task<CreateTodoListResponseDto> ExecuteAsync(
       [HttpTrigger("post", Route = "todo")] HttpRequest request,
       CancellationToken cancellationToken)
     {

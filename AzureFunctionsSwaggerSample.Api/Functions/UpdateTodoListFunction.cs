@@ -28,7 +28,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     }
 
     [FunctionName(nameof(UpdateTodoListFunction))]
-    public async Task RunAsync(
+    public async Task ExecuteAsync(
       [HttpTrigger("put", Route = "todo/{todoListId}")] HttpRequest request,
       Guid todoListId,
       CancellationToken cancellationToken)
