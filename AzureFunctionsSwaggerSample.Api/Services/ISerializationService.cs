@@ -8,6 +8,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
   using System.Threading;
   using System.Threading.Tasks;
 
+  /// <summary>Provides a simple API to serialize/deserialize an object.</summary>
   public interface ISerializationService
   {
     public ValueTask<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken);

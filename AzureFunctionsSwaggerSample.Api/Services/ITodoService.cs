@@ -10,6 +10,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 
   using AzureFunctionsSwaggerSample.Api.Dtos;
 
+  /// <summary>Provides a simple API to operate within the TODO list domain.</summary>
   public interface ITodoService
   {
     public Task<GetTodoListResponseDto> GetTodoListAsync(Guid todoListId, CancellationToken cancellationToken);
