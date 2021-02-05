@@ -17,6 +17,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration;
   using Microsoft.OpenApi.Extensions;
 
+  /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class GetSwaggerFunction
   {
     [FunctionName(nameof(GetSwaggerFunction))]

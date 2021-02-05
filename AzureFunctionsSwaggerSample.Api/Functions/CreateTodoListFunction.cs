@@ -14,11 +14,15 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
 
+  /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CreateTodoListFunction
   {
     private readonly ITodoService _todoService;
     private readonly ISerializationService _serializationService;
 
+    /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CreateTodoListFunction"/> class.</summary>
+    /// <param name="todoService">An object that provides a simple API to operate within the TODO list domain.</param>
+    /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
     public CreateTodoListFunction(
       ITodoService todoService,
       ISerializationService serializationService)
