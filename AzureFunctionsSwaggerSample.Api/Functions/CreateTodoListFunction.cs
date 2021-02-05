@@ -31,6 +31,16 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       _serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
     }
 
+    /// <summary>CreateTodoListFunction</summary>
+    /// <group>TODO List</group>
+    /// <remarks>Creates a TODO list.</remarks>
+    /// <param name="request">An object that represents the incoming side of an individual HTTP request.</param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <param name="command" required="true" in="body"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListRequestDto"/>An object that represents data to update a TODO list.</param>
+    /// <returns>An object that represents an asynchronous operation.</returns>
+    /// <verb>post</verb>
+    /// <url>http://localhost:7071/api/todo</url>
+    /// <response code="204"></response>
     [FunctionName(nameof(CreateTodoListFunction))]
     public async Task<CreateTodoListResponseDto> ExecuteAsync(
       [HttpTrigger("post", Route = "todo")] HttpRequest request,

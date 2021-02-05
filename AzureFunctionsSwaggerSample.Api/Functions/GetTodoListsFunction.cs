@@ -24,6 +24,15 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     public GetTodoListsFunction(ITodoService todoService)
       => _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
 
+    /// <summary>GetTodoListsFunction</summary>
+    /// <group>TODO List</group>
+    /// <remarks>Gets TODO lists.</remarks>
+    /// <param name="request">An object that represents the incoming side of an individual HTTP request.</param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation.</returns>
+    /// <verb>get</verb>
+    /// <url>http://localhost:7071/api/todo</url>
+    /// <response code="200"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.GetTodoListsResponseDto"/>An object that represents detail of a TODO list task.</response>
     [FunctionName(nameof(GetTodoListsFunction))]
     public async Task<GetTodoListsResponseDto> ExecuteAsync(
       [HttpTrigger("get", Route = "todo")] HttpRequest request,

@@ -20,6 +20,15 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class GetSwaggerFunction
   {
+    /// <summary>GetSwaggerFunction</summary>
+    /// <group>Swagger</group>
+    /// <remarks>Gets a Swagger document.</remarks>
+    /// <param name="request">An object that represents the incoming side of an individual HTTP request.</param>
+    /// <param name="executionContext"></param>
+    /// <returns>An object that defines a contract that represents the result of an action method.</returns>
+    /// <verb>get</verb>
+    /// <url>http://localhost:7071/api/swagger/swagger.json</url>
+    /// <response code="200"></response>
     [FunctionName(nameof(GetSwaggerFunction))]
     public IActionResult Execute(
       [HttpTrigger("get", Route = "swagger/swagger.json")] HttpRequest request,

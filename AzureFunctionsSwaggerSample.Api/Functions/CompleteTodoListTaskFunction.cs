@@ -39,7 +39,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <param name="taskId" required="true" cref="System.Guid" in="path">An object that represents an ID of a TODO list task.</param>
     /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
     /// <returns>An object that represents an asynchronous operation.</returns>
-    /// <verb>get</verb>
+    /// <verb>post</verb>
     /// <url>http://localhost:7071/api/todo/{todoListId}/task/{taskId}/complete</url>
     /// <response code="204"></response>
     [FunctionName(nameof(CompleteTodoListTaskFunction))]
