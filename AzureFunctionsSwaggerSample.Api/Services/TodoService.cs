@@ -26,6 +26,10 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       _todoListTaskDictionary = new Dictionary<Guid, IList<TodoListTaskDocument>>();
     }
 
+    /// <summary>Gets a TODO list by its ID.</summary>
+    /// <param name="todoListId"></param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation that can return a value.</returns>
     public Task<GetTodoListResponseDto> GetTodoListAsync(Guid todoListId, CancellationToken cancellationToken)
     {
       GetTodoListResponseDto reponseDto = null;
@@ -51,6 +55,9 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       return Task.FromResult(reponseDto);
     }
 
+    /// <summary>Gets a collection of TODO lists.</summary>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation that can return a value.</returns>
     public Task<GetTodoListsResponseDto> GetTodoListsAsync(CancellationToken cancellationToken)
     {
       var responseDto = new GetTodoListsResponseDto
@@ -65,6 +72,10 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       return Task.FromResult(responseDto);
     }
 
+    /// <summary>Creates a TODO list.</summary>
+    /// <param name="command">An object that represents data to create a TODO list.</param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation that can return a value.</returns>
     public Task<CreateTodoListResponseDto> CreateTodoListAsync(CreateTodoListRequestDto command, CancellationToken cancellationToken)
     {
       var todoListId = Guid.NewGuid();
@@ -88,7 +99,11 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       return Task.FromResult(responseDto);
     }
 
-    public Task UpdateProductAsync(UpdateTodoListRequestDto command, CancellationToken cancellationToken)
+    /// <summary>Updates a TODO list.</summary>
+    /// <param name="command">An object that represents data to update a TODO list.</param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation that can return a value.</returns>
+    public Task UpdateTodoListAsync(UpdateTodoListRequestDto command, CancellationToken cancellationToken)
     {
       if (_todoListDictionary.TryGetValue(command.TodoListId, out var todoListDocument))
       {
@@ -99,6 +114,10 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       throw new Exception();
     }
 
+    /// <summary>Creates a TODO list task.</summary>
+    /// <param name="command">An object that represents data to create a TODO list task.</param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation that can return a value.</returns>
     public Task<CreateTodoListTaskResponseDto> CreateTodoListTaskAsync(CreateTodoListTaskRequestDto command, CancellationToken cancellationToken)
     {
       if (!_todoListTaskDictionary.TryGetValue(command.TodoListId, out var todoListTaskDocuments))
@@ -124,6 +143,10 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       return Task.FromResult(responseDto);
     }
 
+    /// <summary>Completes a TODO list task.</summary>
+    /// <param name="command">An object that represents data to complete a TODO list task.</param>
+    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <returns>An object that represents an asynchronous operation that can return a value.</returns>
     public Task CompleteTodoListTaskAsync(CompleteTodoListTaskRequestDto command, CancellationToken cancellationToken)
     {
       if (_todoListTaskDictionary.TryGetValue(command.TodoListId, out var todoListTaskDocuments))

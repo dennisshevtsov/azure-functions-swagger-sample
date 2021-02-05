@@ -42,7 +42,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
       command.TodoListId = todoListId;
 
-      await _todoService.UpdateProductAsync(command, cancellationToken);
+      await _todoService.UpdateTodoListAsync(command, cancellationToken);
     }
   }
 }

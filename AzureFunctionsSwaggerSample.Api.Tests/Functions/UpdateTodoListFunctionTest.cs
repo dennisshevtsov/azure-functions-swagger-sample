@@ -42,7 +42,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<UpdateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(new UpdateTodoListRequestDto());
 
-      _todoServiceMock.Setup(service => service.UpdateProductAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()))
+      _todoServiceMock.Setup(service => service.UpdateTodoListAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()))
                       .Returns((UpdateTodoListRequestDto command, CancellationToken cancellationToken) =>
                       {
                         if (command.TodoListId != todoListId)
@@ -56,7 +56,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       await _function.ExecuteAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<UpdateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      _todoServiceMock.Verify(service => service.UpdateProductAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()));
+      _todoServiceMock.Verify(service => service.UpdateTodoListAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()));
     }
   }
 }
