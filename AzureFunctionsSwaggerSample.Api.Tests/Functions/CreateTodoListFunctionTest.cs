@@ -4,6 +4,10 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
+  using System.Threading;
+  using System.Threading.Tasks;
+
+  using Microsoft.AspNetCore.Http;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
@@ -27,8 +31,11 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     }
 
     [TestMethod]
-    public void Test()
+    public async Task Test()
     {
+      var httpRequestMock = new Mock<HttpRequest>();
+
+      await _function.RunAsync(httpRequestMock.Object, CancellationToken.None);
     }
   }
 }

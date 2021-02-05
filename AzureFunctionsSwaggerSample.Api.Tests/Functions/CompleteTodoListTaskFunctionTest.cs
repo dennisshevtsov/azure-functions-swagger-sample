@@ -4,6 +4,10 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
+  using System.Threading;
+  using System.Threading.Tasks;
+
+  using Microsoft.AspNetCore.Http;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
