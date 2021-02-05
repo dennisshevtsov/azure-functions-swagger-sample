@@ -71,7 +71,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests
         Assert.AreEqual(creatingTodoListTasks[i].Title, receivedTodoListTasks[i].Title);
         Assert.AreEqual(creatingTodoListTasks[i].Description, receivedTodoListTasks[i].Description);
         Assert.AreEqual(creatingTodoListTasks[i].Deadline, receivedTodoListTasks[i].Deadline);
-        Assert.AreEqual(false, receivedTodoListTasks[i].Done);
+        Assert.AreEqual(false, receivedTodoListTasks[i].Completed);
       }
 
       var completeTask = 0;
@@ -94,7 +94,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests
         Assert.AreEqual(receivedTodoListTasks1[i].Title, receivedTodoListTasks[i].Title);
         Assert.AreEqual(receivedTodoListTasks1[i].Description, receivedTodoListTasks[i].Description);
         Assert.AreEqual(receivedTodoListTasks1[i].Deadline, receivedTodoListTasks[i].Deadline);
-        Assert.AreEqual(i == completeTask, receivedTodoListTasks1[i].Done);
+        Assert.AreEqual(i == completeTask, receivedTodoListTasks1[i].Completed);
       }
     }
 

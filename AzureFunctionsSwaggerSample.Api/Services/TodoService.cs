@@ -43,7 +43,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
             Title = document.Title,
             Description = document.Description,
             Deadline = document.Deadline,
-            Done = document.Done,
+            Completed = document.Completed,
           }),
         };
       }
@@ -132,7 +132,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 
         if (todoListTaskDocument != null)
         {
-          todoListTaskDocument.Done = true;
+          todoListTaskDocument.Completed = true;
 
         }
       }

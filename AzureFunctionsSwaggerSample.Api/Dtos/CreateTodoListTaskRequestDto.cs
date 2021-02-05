@@ -6,14 +6,19 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
   using System;
 
+  /// <summary>Represents data to create a TODO list task.</summary>
   public sealed class CreateTodoListTaskRequestDto
   {
+    /// <summary>Gets/sets a value that represents an ID of a TODO list.</summary>
     public Guid TodoListId { get; set; }
 
+    /// <summary>Gets/sets a value that represents a title of a TODO list task.</summary>
     public string Title { get; set; }
 
+    /// <summary>Gets/sets a value that represents a descriptino of a TODO list task.</summary>
     public string Description { get; set; }
 
+    /// <summary>Gets/sets a value that represents a deadline of a TODO list task.</summary>
     public DateTime Deadline { get; set; }
   }
 }

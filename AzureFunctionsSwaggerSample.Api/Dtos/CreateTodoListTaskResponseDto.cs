@@ -6,8 +6,10 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
   using System;
 
+  /// <summary>Represents detail of a TODO list task.</summary>
   public sealed class CreateTodoListTaskResponseDto
   {
+    /// <summary>Gets/sets a value that represents and ID of a TODO list task.</summary>
     public Guid TaskId { get; set; }
   }
 }
