@@ -4,6 +4,8 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
+  using System;
+  using System.IO;
   using System.Threading;
   using System.Threading.Tasks;
 
@@ -11,6 +13,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
+  using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Functions;
   using AzureFunctionsSwaggerSample.Api.Services;
 
@@ -31,8 +34,30 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     }
 
     [TestMethod]
-    public void Test()
+    public async Task Test()
     {
+      var todoListId = Guid.NewGuid();
+      var todoListTaskId = Guid.NewGuid();
+      var httpRequestMock = new Mock<HttpRequest>();
+
+      _serializationServiceMock.Setup(service => service.DeserializeAsync<CompleteTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                               .ReturnsAsync(new CompleteTodoListTaskRequestDto());
+
+      _todoServiceMock.Setup(service => service.CompleteTodoListTaskAsync(It.IsAny<CompleteTodoListTaskRequestDto>(), It.IsAny<CancellationToken>()))
+                      .Returns((CompleteTodoListTaskRequestDto command, CancellationToken cancellationToken) =>
+                      {
+                        if (command.TodoListId != todoListId || command.TaskId != todoListTaskId)
+                        {
+                          Assert.Fail();
+                        }
+
+                        return Task.CompletedTask;
+                      });
+
+      await _function.RunAsync(httpRequestMock.Object, todoListId, todoListTaskId, CancellationToken.None);
+
+      _serializationServiceMock.Verify(service => service.DeserializeAsync<CompleteTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
+      _todoServiceMock.Verify(service => service.CompleteTodoListTaskAsync(It.IsAny<CompleteTodoListTaskRequestDto>(), It.IsAny<CancellationToken>()));
     }
   }
 }
