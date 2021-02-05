@@ -13,11 +13,13 @@ namespace AzureFunctionsSwaggerSample.Api.Services
   using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
 
+  /// <summary>Provides a simple API to operate within the TODO list domain.</summary>
   public sealed class TodoService : ITodoService
   {
     private readonly IDictionary<Guid, TodoListDocument> _todoListDictionary;
     private readonly IDictionary<Guid, IList<TodoListTaskDocument>> _todoListTaskDictionary;
 
+    /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Services.TodoService"/> class.</summary>
     public TodoService()
     {
       _todoListDictionary = new Dictionary<Guid, TodoListDocument>();
