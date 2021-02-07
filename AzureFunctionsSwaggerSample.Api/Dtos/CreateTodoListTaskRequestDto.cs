@@ -6,6 +6,8 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
   using System;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
+
   /// <summary>Represents data to create a TODO list task.</summary>
   public sealed class CreateTodoListTaskRequestDto
   {
@@ -20,5 +22,15 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
 
     /// <summary>Gets/sets a value that represents a deadline of a TODO list task.</summary>
     public DateTime Deadline { get; set; }
+
+    /// <summary>Converts an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskRequestDto"/> class to an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListTaskDocument"/> class.</summary>
+    /// <returns>An instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListTaskDocument"/> class.</returns>
+    public TodoListTaskDocument ToDocument() => new TodoListTaskDocument
+    {
+      TaskId = Guid.NewGuid(),
+      Title = Title,
+      Description = Description,
+      Deadline = Deadline,
+    };
   }
 }
