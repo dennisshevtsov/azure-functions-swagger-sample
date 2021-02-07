@@ -46,8 +46,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(UpdateTodoListFunction))]
     public async Task ExecuteAsync(
       [HttpTrigger("put", Route = "todo/{todoListId}")] HttpRequest request,
+      [CosmosDB("{databaseId}", "{collectionId}",
+        ConnectionStringSetting = "{connectionString}")] IAsyncCollector<TodoListDocument> collector,
       [CosmosDB("{databaseId}", "{collectionId}", ConnectionStringSetting = "{connectionString}",
-        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] out TodoListDocument document,
+        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] TodoListDocument document,
       Guid todoListId,
       CancellationToken cancellationToken)
     {
@@ -55,6 +57,8 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
         request.Body, cancellationToken);
 
       command.UpdateDocument(document);
+
+      await collector.AddAsync(document, cancellationToken);
     }
   }
 }
