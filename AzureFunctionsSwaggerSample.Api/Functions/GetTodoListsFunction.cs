@@ -5,12 +5,12 @@
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
   using System;
-  using System.Threading;
-  using System.Threading.Tasks;
+  using System.Collections.Generic;
 
   using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
 
@@ -28,15 +28,16 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <group>TODO List</group>
     /// <remarks>Gets TODO lists.</remarks>
     /// <param name="request">An object that represents the incoming side of an individual HTTP request.</param>
-    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
+    /// <param name="response">An object that represents an object that wraps a collection of TODO lists.</param>
     /// <returns>An object that represents an asynchronous operation.</returns>
     /// <verb>get</verb>
     /// <url>http://localhost:7071/api/todo</url>
-    /// <response code="200"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.GetTodoListsResponseDto"/>An object that represents detail of a TODO list task.</response>
+    /// <response code="200"><see cref="System.Collections.Generic.IEnumerable{T}"/> where T is <see cref="AzureFunctionsSwaggerSample.Api.Dtos.GetTodoListsItemResponseDto"/> An object that represents detail of a TODO list task.</response>
     [FunctionName(nameof(GetTodoListsFunction))]
-    public async Task<GetTodoListsResponseDto> ExecuteAsync(
+    public IEnumerable<GetTodoListsItemResponseDto> ExecuteAsync(
       [HttpTrigger("get", Route = "todo")] HttpRequest request,
-      CancellationToken cancellationToken)
-      => await _todoService.GetTodoListsAsync(cancellationToken);
+      [CosmosDB("{databaseId}", "{collectionId}", ConnectionStringSetting = "{connectionString}",
+        PartitionKey = nameof(TodoListDocument))] IEnumerable<GetTodoListsItemResponseDto> response)
+      => response;
   }
 }

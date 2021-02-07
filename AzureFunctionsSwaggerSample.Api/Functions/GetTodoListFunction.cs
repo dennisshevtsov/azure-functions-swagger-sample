@@ -5,12 +5,11 @@
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
   using System;
-  using System.Threading;
-  using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
 
@@ -28,17 +27,17 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <group>TODO List</group>
     /// <remarks>Gets a TODO list.</remarks>
     /// <param name="request">An object that represents the incoming side of an individual HTTP request.</param>
+    /// <param name="response">An object that represents detail of a TODO list.</param>
     /// <param name="todoListId" required="true" cref="System.Guid" in="path">A value that represents an ID of TODO list.</param>
-    /// <param name="cancellationToken">An object that propagates notification that operations should be canceled.</param>
     /// <returns>An object that represents an asynchronous operation.</returns>
     /// <verb>get</verb>
     /// <url>http://localhost:7071/api/todo/{todoListId}</url>
     /// <response code="200"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.GetTodoListResponseDto"/>An object that represents detail of a TODO list task.</response>
     [FunctionName(nameof(GetTodoListFunction))]
-    public async Task<GetTodoListResponseDto> ExecuteAsync(
+    public GetTodoListResponseDto Execute(
       [HttpTrigger("get", Route = "todo/{todoListId}")] HttpRequest request,
-      Guid todoListId,
-      CancellationToken cancellationToken)
-      => await _todoService.GetTodoListAsync(todoListId, cancellationToken);
+      [CosmosDB("{databaseId}", "{collectionId}", ConnectionStringSetting = "{connectionString}",
+        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] GetTodoListResponseDto response,
+      Guid todoListId) => response;
   }
 }
