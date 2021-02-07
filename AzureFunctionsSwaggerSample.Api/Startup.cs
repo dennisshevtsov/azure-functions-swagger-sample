@@ -19,7 +19,6 @@ namespace AzureFunctionsSwaggerSample.Api
     /// <param name="builder">An object that provides a simple API to configure the function app.</param>
     public void Configure(IWebJobsBuilder builder)
     {
-      builder.Services.AddSingleton<ITodoService, TodoService>();
       builder.Services.AddSingleton(provider => SerializationService.Get());
     }
   }
