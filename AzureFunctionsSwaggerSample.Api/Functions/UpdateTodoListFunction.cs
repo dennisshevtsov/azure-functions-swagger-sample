@@ -13,6 +13,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
+  using AzureFunctionsSwaggerSample.Api.Documents;
 
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class UpdateTodoListFunction
@@ -45,15 +46,15 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(UpdateTodoListFunction))]
     public async Task ExecuteAsync(
       [HttpTrigger("put", Route = "todo/{todoListId}")] HttpRequest request,
+      [CosmosDB("{databaseId}", "{collectionId}", ConnectionStringSetting = "{connectionString}",
+        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] out TodoListDocument document,
       Guid todoListId,
       CancellationToken cancellationToken)
     {
       var command = await _serializationService.DeserializeAsync<UpdateTodoListRequestDto>(
         request.Body, cancellationToken);
 
-      command.TodoListId = todoListId;
-
-      await _todoService.UpdateTodoListAsync(command, cancellationToken);
+      command.UpdateDocument(document);
     }
   }
 }
