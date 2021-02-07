@@ -13,6 +13,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
+  using AzureFunctionsSwaggerSample.Api.Documents;
 
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CompleteTodoListTaskFunction
