@@ -20,17 +20,14 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   [TestClass]
   public sealed class CompleteTodoListTaskFunctionTest
   {
-    private Mock<ITodoService> _todoServiceMock;
     private Mock<ISerializationService> _serializationServiceMock;
     private CompleteTodoListTaskFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
-      _todoServiceMock = new Mock<ITodoService>();
       _serializationServiceMock = new Mock<ISerializationService>();
-      _function = new CompleteTodoListTaskFunction(
-        _todoServiceMock.Object, _serializationServiceMock.Object);
+      _function = new CompleteTodoListTaskFunction(_serializationServiceMock.Object);
     }
 
     [TestMethod]
@@ -43,21 +40,9 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<CompleteTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(new CompleteTodoListTaskRequestDto());
 
-      _todoServiceMock.Setup(service => service.CompleteTodoListTaskAsync(It.IsAny<CompleteTodoListTaskRequestDto>(), It.IsAny<CancellationToken>()))
-                      .Returns((CompleteTodoListTaskRequestDto command, CancellationToken cancellationToken) =>
-                      {
-                        if (command.TodoListId != todoListId || command.TaskId != todoListTaskId)
-                        {
-                          Assert.Fail();
-                        }
-
-                        return Task.CompletedTask;
-                      });
-
-      await _function.ExecuteAsync(httpRequestMock.Object, todoListId, todoListTaskId, CancellationToken.None);
+      await _function.ExecuteAsync(httpRequestMock.Object, null, null, todoListId, todoListTaskId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CompleteTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      _todoServiceMock.Verify(service => service.CompleteTodoListTaskAsync(It.IsAny<CompleteTodoListTaskRequestDto>(), It.IsAny<CancellationToken>()));
     }
   }
 }

@@ -20,17 +20,14 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   [TestClass]
   public sealed class CreateTodoListTaskFunctionTest
   {
-    private Mock<ITodoService> _todoServiceMock;
     private Mock<ISerializationService> _serializationServiceMock;
     private CreateTodoListTaskFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
-      _todoServiceMock = new Mock<ITodoService>();
       _serializationServiceMock = new Mock<ISerializationService>();
-      _function = new CreateTodoListTaskFunction(
-        _todoServiceMock.Object, _serializationServiceMock.Object);
+      _function = new CreateTodoListTaskFunction(_serializationServiceMock.Object);
     }
 
     [TestMethod]
@@ -42,21 +39,9 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(new CreateTodoListTaskRequestDto());
 
-      _todoServiceMock.Setup(service => service.CreateTodoListTaskAsync(It.IsAny<CreateTodoListTaskRequestDto>(), It.IsAny<CancellationToken>()))
-                      .ReturnsAsync((CreateTodoListTaskRequestDto command, CancellationToken cancellationToken) =>
-                      {
-                        if (command.TodoListId != todoListId)
-                        {
-                          Assert.Fail();
-                        }
-
-                        return new CreateTodoListTaskResponseDto();
-                      });
-
-      await _function.ExecuteAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
+      await _function.ExecuteAsync(httpRequestMock.Object, null, todoListId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      _todoServiceMock.Verify(service => service.CreateTodoListTaskAsync(It.IsAny<CreateTodoListTaskRequestDto>(), It.IsAny<CancellationToken>()));
     }
   }
 }

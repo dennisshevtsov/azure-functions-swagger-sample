@@ -20,17 +20,14 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   [TestClass]
   public sealed class UpdateTodoListFunctionTest
   {
-    private Mock<ITodoService> _todoServiceMock;
     private Mock<ISerializationService> _serializationServiceMock;
     private UpdateTodoListFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
-      _todoServiceMock = new Mock<ITodoService>();
       _serializationServiceMock = new Mock<ISerializationService>();
-      _function = new UpdateTodoListFunction(
-        _todoServiceMock.Object, _serializationServiceMock.Object);
+      _function = new UpdateTodoListFunction(_serializationServiceMock.Object);
     }
 
     [TestMethod]
@@ -42,21 +39,9 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<UpdateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(new UpdateTodoListRequestDto());
 
-      _todoServiceMock.Setup(service => service.UpdateTodoListAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()))
-                      .Returns((UpdateTodoListRequestDto command, CancellationToken cancellationToken) =>
-                      {
-                        if (command.TodoListId != todoListId)
-                        {
-                          Assert.Fail();
-                        }
-
-                        return Task.CompletedTask;
-                      });
-
-      await _function.ExecuteAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
+      await _function.ExecuteAsync(httpRequestMock.Object, null, null, todoListId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<UpdateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      _todoServiceMock.Verify(service => service.UpdateTodoListAsync(It.IsAny<UpdateTodoListRequestDto>(), It.IsAny<CancellationToken>()));
     }
   }
 }

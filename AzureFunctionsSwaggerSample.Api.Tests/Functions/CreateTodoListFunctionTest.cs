@@ -20,16 +20,13 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   public sealed class CreateTodoListFunctionTest
   {
     private Mock<ISerializationService> _serializationServiceMock;
-    private Mock<ITodoService> _todoServiceMock;
     private CreateTodoListFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
       _serializationServiceMock = new Mock<ISerializationService>();
-      _todoServiceMock = new Mock<ITodoService>();
-      _function = new CreateTodoListFunction(
-        _todoServiceMock.Object, _serializationServiceMock.Object);
+      _function = new CreateTodoListFunction(_serializationServiceMock.Object);
     }
 
     [TestMethod]
@@ -37,10 +34,9 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     {
       var httpRequestMock = new Mock<HttpRequest>();
 
-      await _function.ExecuteAsync(httpRequestMock.Object, CancellationToken.None);
+      await _function.ExecuteAsync(httpRequestMock.Object, null, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      _todoServiceMock.Verify(service => service.CreateTodoListAsync(It.IsAny<CreateTodoListRequestDto>(), It.IsAny<CancellationToken>()));
     }
   }
 }
