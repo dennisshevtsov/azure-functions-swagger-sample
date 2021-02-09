@@ -16,13 +16,6 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class GetTodoListFunction
   {
-    private readonly ITodoService _todoService;
-
-    /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.GetTodoListFunction"/> class.</summary>
-    /// <param name="todoService">An object that provides a simple API to operate within the TODO list domain.</param>
-    public GetTodoListFunction(ITodoService todoService)
-      => _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
-
     /// <summary>GetTodoListFunction</summary>
     /// <group>TODO List</group>
     /// <remarks>Gets a TODO list.</remarks>

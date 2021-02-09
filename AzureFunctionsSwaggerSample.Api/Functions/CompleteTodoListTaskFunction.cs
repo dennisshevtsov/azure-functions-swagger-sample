@@ -18,17 +18,14 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CompleteTodoListTaskFunction
   {
-    private readonly ITodoService _todoService;
     private readonly ISerializationService _serializationService;
 
     /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CompleteTodoListTaskFunction"/> class.</summary>
     /// <param name="todoService">An object that provides a simple API to operate within the TODO list domain.</param>
     /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
     public CompleteTodoListTaskFunction(
-      ITodoService todoService,
       ISerializationService serializationService)
     {
-      _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
       _serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
     }
 
@@ -46,6 +43,8 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(CompleteTodoListTaskFunction))]
     public async Task ExecuteAsync(
       [HttpTrigger("post", Route = "todo/{todoListId}/task/{taskId}/complete")] HttpRequest request,
+      [CosmosDB] IAsyncCollector<TodoListDocument> collector,
+      [CosmosDB] TodoListDocument document,
       Guid todoListId,
       Guid taskId,
       CancellationToken cancellationToken)
@@ -56,7 +55,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       command.TodoListId = todoListId;
       command.TaskId = taskId;
 
-      await _todoService.CompleteTodoListTaskAsync(command, cancellationToken);
+      await collector.AddAsync(document, cancellationToken);
     }
   }
 }

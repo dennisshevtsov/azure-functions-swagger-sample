@@ -4,37 +4,29 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
-  using System.Threading;
-  using System.Threading.Tasks;
-
   using Microsoft.AspNetCore.Http;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
   using AzureFunctionsSwaggerSample.Api.Functions;
-  using AzureFunctionsSwaggerSample.Api.Services;
 
   [TestClass]
   public sealed class GetTodoListsFunctionTest
   {
-    private Mock<ITodoService> _todoServiceMock;
     private GetTodoListsFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
-      _todoServiceMock = new Mock<ITodoService>();
-      _function = new GetTodoListsFunction(_todoServiceMock.Object);
+      _function = new GetTodoListsFunction();
     }
 
     [TestMethod]
-    public async Task Test()
+    public void Test()
     {
       var httpRequestMock = new Mock<HttpRequest>();
 
-      await _function.ExecuteAsync(httpRequestMock.Object, CancellationToken.None);
-
-      _todoServiceMock.Verify(service => service.GetTodoListsAsync(It.IsAny<CancellationToken>()));
+      _function.Execute(httpRequestMock.Object, null);
     }
   }
 }

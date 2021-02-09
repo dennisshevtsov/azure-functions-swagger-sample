@@ -13,30 +13,25 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   using Moq;
 
   using AzureFunctionsSwaggerSample.Api.Functions;
-  using AzureFunctionsSwaggerSample.Api.Services;
 
   [TestClass]
   public sealed class GetTodoListFunctionTest
   {
-    private Mock<ITodoService> _todoServiceMock;
     private GetTodoListFunction _function;
 
     [TestInitialize]
     public void Initialize()
     {
-      _todoServiceMock = new Mock<ITodoService>();
-      _function = new GetTodoListFunction(_todoServiceMock.Object);
+      _function = new GetTodoListFunction();
     }
 
     [TestMethod]
-    public async Task Test()
+    public void Test()
     {
       var todoListId = Guid.NewGuid();
       var httpRequestMock = new Mock<HttpRequest>();
 
-      await _function.ExecuteAsync(httpRequestMock.Object, todoListId, CancellationToken.None);
-
-      _todoServiceMock.Verify(service => service.GetTodoListAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()));
+      _function.Execute(httpRequestMock.Object, null, todoListId);
     }
   }
 }
