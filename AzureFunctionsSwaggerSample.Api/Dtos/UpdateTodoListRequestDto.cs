@@ -11,9 +11,6 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
   /// <summary>Represents data to update a TODO list.</summary>
   public sealed class UpdateTodoListRequestDto
   {
-    /// <summary>Gets/sets a value that represents an ID of a TODO list.</summary>
-    public Guid TodoListId { get; set; }
-
     /// <summary>Gets/sets a value that represents a title of a TODO list.</summary>
     public string Title { get; set; }
 
