@@ -5,17 +5,17 @@
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
-  using AzureFunctionsSwaggerSample.Api.Documents;
-  using System.Collections.Generic;
-  using System.Linq;
 
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CreateTodoListTaskFunction
@@ -44,10 +44,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(CreateTodoListTaskFunction))]
     public async Task<CreateTodoListTaskResponseDto> ExecuteAsync(
       [HttpTrigger("post", Route = "todo/{todoListId}")] HttpRequest request,
-      [CosmosDB("{databaseId}", "{collectionId}",
-        ConnectionStringSetting = "{connectionString}")] IAsyncCollector<TodoListDocument> collector,
-      [CosmosDB("{databaseId}", "{collectionId}", Id = "{todoListId}",
-        ConnectionStringSetting = "{connectionString}")] TodoListDocument todoListDocument,
+      [CosmosDB("%DatabaseId%", "%CollectionId%",
+        ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
+      [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
+        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
       Guid todoListId,
       CancellationToken cancellationToken)
     {

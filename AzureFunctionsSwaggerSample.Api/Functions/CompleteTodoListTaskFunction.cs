@@ -43,8 +43,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(CompleteTodoListTaskFunction))]
     public async Task ExecuteAsync(
       [HttpTrigger("post", Route = "todo/{todoListId}/task/{taskId}/complete")] HttpRequest request,
-      [CosmosDB] IAsyncCollector<TodoListDocument> collector,
-      [CosmosDB] TodoListDocument document,
+      [CosmosDB("%DatabaseId%", "%CollectionId%",
+        ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
+      [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
+        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
       Guid todoListId,
       Guid taskId,
       CancellationToken cancellationToken)
@@ -52,10 +54,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       var command = await _serializationService.DeserializeAsync<CompleteTodoListTaskRequestDto>(
         request.Body, cancellationToken);
 
-      command.TodoListId = todoListId;
       command.TaskId = taskId;
+      command.UpdateDocument(todoListDocument);
 
-      await collector.AddAsync(document, cancellationToken);
+      await collector.AddAsync(todoListDocument, cancellationToken);
     }
   }
 }

@@ -29,7 +29,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(GetTodoListsFunction))]
     public IEnumerable<GetTodoListsItemResponseDto> Execute(
       [HttpTrigger("get", Route = "todo")] HttpRequest request,
-      [CosmosDB("{databaseId}", "{collectionId}", ConnectionStringSetting = "{connectionString}",
+      [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
         PartitionKey = nameof(TodoListDocument))] IEnumerable<GetTodoListsItemResponseDto> response)
       => response;
   }

@@ -41,8 +41,8 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     [FunctionName(nameof(CreateTodoListFunction))]
     public async Task<CreateTodoListResponseDto> ExecuteAsync(
       [HttpTrigger("post", Route = "todo")] HttpRequest request,
-      [CosmosDB("{databaseId}", "{collectionId}",
-        ConnectionStringSetting = "{connectionString}")] IAsyncCollector<TodoListDocument> collector,
+      [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
+        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] IAsyncCollector<TodoListDocument> collector,
       CancellationToken cancellationToken)
     {
       var command = await _serializationService.DeserializeAsync<CreateTodoListRequestDto>(

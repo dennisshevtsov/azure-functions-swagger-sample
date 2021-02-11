@@ -48,7 +48,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       var input = new OpenApiGeneratorConfig(
         xmlDocuments, assemblyPaths, "V1", FilterSetVersion.V1);
       var generationSettings = new OpenApiDocumentGenerationSettings(
-              new SchemaGenerationSettings(new CamelCasePropertyNameResolver()));
+        new SchemaGenerationSettings(new CamelCasePropertyNameResolver()));
 
       var openApiDocuments = generator.GenerateDocuments(input, out _, generationSettings);
       var json = openApiDocuments.First().Value.Serialize(
