@@ -64,6 +64,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       await _function.ExecuteAsync(httpRequestMock.Object, collectorMock.Object, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
+      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
     }
 
     private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");
