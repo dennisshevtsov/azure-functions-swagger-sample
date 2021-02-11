@@ -14,6 +14,8 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
   using AzureFunctionsSwaggerSample.Api.Documents;
+  using System.Collections.Generic;
+  using System.Linq;
 
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CreateTodoListTaskFunction
@@ -43,20 +45,24 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     public async Task<CreateTodoListTaskResponseDto> ExecuteAsync(
       [HttpTrigger("post", Route = "todo/{todoListId}")] HttpRequest request,
       [CosmosDB("{databaseId}", "{collectionId}",
-        ConnectionStringSetting = "{connectionString}")] IAsyncCollector<TodoListTaskDocument> collector,
+        ConnectionStringSetting = "{connectionString}")] IAsyncCollector<TodoListDocument> collector,
+      [CosmosDB("{databaseId}", "{collectionId}", Id = "{todoListId}",
+        ConnectionStringSetting = "{connectionString}")] TodoListDocument todoListDocument,
       Guid todoListId,
       CancellationToken cancellationToken)
     {
       var command = await _serializationService.DeserializeAsync<CreateTodoListTaskRequestDto>(
         request.Body, cancellationToken);
+      var todoListTaskDocument = command.ToDocument();
 
-      command.TodoListId = todoListId;
+      var tasks = new List<TodoListTaskDocument>(todoListDocument.Tasks ?? Enumerable.Empty<TodoListTaskDocument>());
 
-      var document = command.ToDocument();
+      tasks.Add(todoListTaskDocument);
+      todoListDocument.Tasks = tasks;
 
-      await collector.AddAsync(document, cancellationToken);
+      await collector.AddAsync(todoListDocument, cancellationToken);
 
-      var response = CreateTodoListTaskResponseDto.FromDocument(document);
+      var response = CreateTodoListTaskResponseDto.FromDocument(todoListTaskDocument);
 
       return response;
     }

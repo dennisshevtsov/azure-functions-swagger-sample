@@ -6,13 +6,16 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
   using System;
   using System.IO;
+  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
+  using Microsoft.Azure.WebJobs;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Functions;
   using AzureFunctionsSwaggerSample.Api.Services;
@@ -36,12 +39,52 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       var todoListId = Guid.NewGuid();
       var httpRequestMock = new Mock<HttpRequest>();
 
-      _serializationServiceMock.Setup(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-                               .ReturnsAsync(new CreateTodoListTaskRequestDto());
+      var requestDto = new CreateTodoListTaskRequestDto
+      {
+        Title = CreateTodoListTaskFunctionTest.RandomToken(),
+        Description = CreateTodoListTaskFunctionTest.RandomToken(),
+        Deadline = DateTime.Today.AddDays(20),
+      };
 
-      await _function.ExecuteAsync(httpRequestMock.Object, null, todoListId, CancellationToken.None);
+      _serializationServiceMock.Setup(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                               .ReturnsAsync(requestDto);
+
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
+      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
+                   .Returns((TodoListDocument todoListDocument, CancellationToken cancellationToken) =>
+                   {
+                     if (todoListDocument == null ||
+                         todoListDocument.Tasks == null)
+                     {
+                       Assert.Fail();
+                     }
+
+                     var todoListTaskDocument = todoListDocument.Tasks.Last();
+
+                     if (todoListTaskDocument.Title != requestDto.Title ||
+                         todoListTaskDocument.Description != requestDto.Description ||
+                         todoListTaskDocument.Deadline != requestDto.Deadline ||
+                         todoListTaskDocument.Completed)
+                     {
+                       Assert.Fail();
+                     }
+
+                     return Task.CompletedTask;
+                   });
+
+      var todoListDocument = new TodoListDocument
+      {
+        TodoListId = todoListId,
+        Title = CreateTodoListTaskFunctionTest.RandomToken(),
+        Description = CreateTodoListTaskFunctionTest.RandomToken(),
+      };
+
+      await _function.ExecuteAsync(httpRequestMock.Object, collectorMock.Object, todoListDocument, todoListId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
     }
+
+    private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");
   }
 }
