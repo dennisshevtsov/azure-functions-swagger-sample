@@ -13,6 +13,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Functions;
   using AzureFunctionsSwaggerSample.Api.Services;
@@ -40,9 +41,18 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<CompleteTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(new CompleteTodoListTaskRequestDto());
 
-      await _function.ExecuteAsync(httpRequestMock.Object, null, null, todoListId, todoListTaskId, CancellationToken.None);
+      var document = new TodoListDocument
+      {
+        TodoListId = todoListId,
+        Title = CompleteTodoListTaskFunctionTest.RandomToken(),
+        Description = CompleteTodoListTaskFunctionTest.RandomToken(),
+      };
+
+      await _function.ExecuteAsync(httpRequestMock.Object, null, document, todoListId, todoListTaskId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CompleteTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
     }
+
+    private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");
   }
 }

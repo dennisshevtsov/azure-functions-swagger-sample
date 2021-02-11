@@ -4,14 +4,17 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 {
+  using System;
   using System.IO;
   using System.Threading;
   using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
+  using Microsoft.Azure.WebJobs;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Functions;
   using AzureFunctionsSwaggerSample.Api.Services;
@@ -34,9 +37,35 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     {
       var httpRequestMock = new Mock<HttpRequest>();
 
-      await _function.ExecuteAsync(httpRequestMock.Object, null, CancellationToken.None);
+      var requestDto = new CreateTodoListRequestDto
+      {
+        Title = CreateTodoListFunctionTest.RandomToken(),
+        Description = CreateTodoListFunctionTest.RandomToken(),
+      };
+
+      _serializationServiceMock.Setup(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                               .ReturnsAsync(requestDto);
+
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
+      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
+                   .Returns((TodoListDocument document, CancellationToken cancellationToken) =>
+                   {
+                     if (document.TodoListId == default ||
+                         document.Title != requestDto.Title ||
+                         document.Description != requestDto.Description)
+                     {
+                       Assert.Fail();
+                     }
+
+                     return Task.CompletedTask;
+                   });
+
+      await _function.ExecuteAsync(httpRequestMock.Object, collectorMock.Object, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
     }
+
+    private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");
   }
 }
