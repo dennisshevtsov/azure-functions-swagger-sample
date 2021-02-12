@@ -4,10 +4,6 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
-  using System;
-  
-  using AzureFunctionsSwaggerSample.Api.Documents;
-  
   /// <summary>Represents data to update a TODO list.</summary>
   public sealed class UpdateTodoListRequestDto
   {
@@ -16,13 +12,5 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
 
     /// <summary>Gets/sets a value that represents a description of a TODO list.</summary>
     public string Description { get; set; }
-
-    /// <summary>Updates an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListDocument"/> class.</summary>
-    /// <param name="document">An instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListDocument"/> class.</param>
-    public void UpdateDocument(TodoListDocument document)
-    {
-      document.Title = Title;
-      document.Description = Description;
-    }
   }
 }

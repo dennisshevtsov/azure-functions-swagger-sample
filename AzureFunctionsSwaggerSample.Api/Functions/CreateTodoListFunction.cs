@@ -19,13 +19,16 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   public sealed class CreateTodoListFunction
   {
     private readonly ISerializationService _serializationService;
+    private readonly ITodoService _todoService;
 
     /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CreateTodoListFunction"/> class.</summary>
     /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
     public CreateTodoListFunction(
-      ISerializationService serializationService)
+      ISerializationService serializationService,
+      ITodoService todoService)
     {
       _serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
+      _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
     }
 
     /// <summary>CreateTodoListFunction</summary>
@@ -47,10 +50,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     {
       var command = await _serializationService.DeserializeAsync<CreateTodoListRequestDto>(
         request.Body, cancellationToken);
-      var document = command.ToDocument();
-
-      await collector.AddAsync(document, cancellationToken);
-
+      var document = await _todoService.CreateTodoListAsync(command, collector, cancellationToken);
       var response = CreateTodoListResponseDto.FromDocument(document);
 
       return response;

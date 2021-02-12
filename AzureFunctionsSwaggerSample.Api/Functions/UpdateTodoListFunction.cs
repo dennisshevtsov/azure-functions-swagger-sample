@@ -19,13 +19,16 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   public sealed class UpdateTodoListFunction
   {
     private readonly ISerializationService _serializationService;
+    private readonly ITodoService _todoService;
 
     /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.UpdateTodoListFunction"/> class.</summary>
     /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
     public UpdateTodoListFunction(
-      ISerializationService serializationService)
+      ISerializationService serializationService,
+      ITodoService todoService)
     {
       _serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
+      _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
     }
 
     /// <summary>UpdateTodoListFunction</summary>
@@ -45,16 +48,14 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       [CosmosDB("%DatabaseId%", "%CollectionId%",
         ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
       [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
-        Id = "{todoListId}", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
+        Id = "{todoListId}", PartitionKey = nameof(TodoListDocument))] TodoListDocument document,
       Guid todoListId,
       CancellationToken cancellationToken)
     {
       var command = await _serializationService.DeserializeAsync<UpdateTodoListRequestDto>(
         request.Body, cancellationToken);
 
-      command.UpdateDocument(todoListDocument);
-
-      await collector.AddAsync(todoListDocument, cancellationToken);
+      await _todoService.UpdateTodoListAsync(command, document, collector, cancellationToken);
     }
   }
 }
