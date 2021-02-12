@@ -4,7 +4,6 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
-  using System;
   using System.Collections.Generic;
 
   using Microsoft.AspNetCore.Http;
@@ -12,7 +11,6 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
   using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
-  using AzureFunctionsSwaggerSample.Api.Services;
 
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class GetTodoListsFunction

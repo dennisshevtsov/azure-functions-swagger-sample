@@ -20,7 +20,7 @@ namespace AzureFunctionsSwaggerSample.Api
     public void Configure(IWebJobsBuilder builder)
     {
       builder.Services.AddSingleton(provider => SerializationService.Get());
-      builder.Services.AddScoped<ITodoService, TodoService>();
+      builder.Services.AddSingleton<ITodoService, TodoService>();
     }
   }
 }

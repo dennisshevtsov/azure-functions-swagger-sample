@@ -9,6 +9,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
+  using Microsoft.AspNetCore.Mvc;
   using Microsoft.Azure.WebJobs;
 
   using AzureFunctionsSwaggerSample.Api.Documents;
@@ -23,6 +24,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
     /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CreateTodoListTaskFunction"/> class.</summary>
     /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
+    /// <param name="todoService">An object that provides a simple API to execute operation within objects of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListDocument"/> class.</param>
     public CreateTodoListTaskFunction(
       ISerializationService serializationService,
       ITodoService todoService)
@@ -41,9 +43,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <returns>An object that represents an asynchronous operation.</returns>
     /// <verb>post</verb>
     /// <url>http://localhost:7071/api/todo/{todoListId}/task</url>
-    /// <response code="200"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskResponseDto"/>An object that represents detail of a TODO list task.</response>
+    /// <response code="201"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskResponseDto"/>An object that represents detail of a TODO list task.</response>
+    /// <response code="400"></response>
     [FunctionName(nameof(CreateTodoListTaskFunction))]
-    public async Task<CreateTodoListTaskResponseDto> ExecuteAsync(
+    public async Task<IActionResult> ExecuteAsync(
       [HttpTrigger("post", Route = "todo/{todoListId}/task")] HttpRequest request,
       [CosmosDB("%DatabaseId%", "%CollectionId%",
         ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
@@ -52,6 +55,11 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       Guid todoListId,
       CancellationToken cancellationToken)
     {
+      if (todoListDocument == null)
+      {
+        return new BadRequestResult();
+      }
+
       var todoListTaskId = Guid.NewGuid();
       var command = await _serializationService.DeserializeAsync<CreateTodoListTaskRequestDto>(
         request.Body, cancellationToken);
@@ -59,7 +67,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       await _todoService.CreateTodoListTaskAsync(
         todoListTaskId, command, todoListDocument, collector, cancellationToken);
 
-      return new CreateTodoListTaskResponseDto(todoListTaskId);
+      return new ObjectResult(new CreateTodoListTaskResponseDto(todoListTaskId))
+      {
+        StatusCode = StatusCodes.Status201Created,
+      };
     }
   }
 }

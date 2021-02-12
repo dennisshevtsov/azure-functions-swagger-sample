@@ -9,6 +9,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
+  using Microsoft.AspNetCore.Mvc;
   using Microsoft.Azure.WebJobs;
 
   using AzureFunctionsSwaggerSample.Api.Documents;
@@ -23,6 +24,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
     /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CreateTodoListFunction"/> class.</summary>
     /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
+    /// <param name="todoService">An object that provides a simple API to execute operation within objects of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListDocument"/> class.</param>
     public CreateTodoListFunction(
       ISerializationService serializationService,
       ITodoService todoService)
@@ -40,9 +42,9 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <returns>An object that represents an asynchronous operation.</returns>
     /// <verb>post</verb>
     /// <url>http://localhost:7071/api/todo</url>
-    /// <response code="204"></response>
+    /// <response code="201"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListResponseDto"/>An object that represents detail of a TODO list.</response>
     [FunctionName(nameof(CreateTodoListFunction))]
-    public async Task<CreateTodoListResponseDto> ExecuteAsync(
+    public async Task<IActionResult> ExecuteAsync(
       [HttpTrigger("post", Route = "todo")] HttpRequest request,
       [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
         Id = "todoListId", PartitionKey = nameof(TodoListDocument))] IAsyncCollector<TodoListDocument> collector,
@@ -54,7 +56,10 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
       await _todoService.CreateTodoListAsync(todoListId, command, collector, cancellationToken);
 
-      return new CreateTodoListResponseDto(todoListId);
+      return new ObjectResult(new CreateTodoListResponseDto(todoListId))
+      {
+        StatusCode = StatusCodes.Status201Created,
+      };
     }
   }
 }

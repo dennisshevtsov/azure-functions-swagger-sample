@@ -4,10 +4,6 @@
 
 namespace AzureFunctionsSwaggerSample.Api.Dtos
 {
-  using System;
-
-  using AzureFunctionsSwaggerSample.Api.Documents;
-
   /// <summary>Represents data to create a TODO list.</summary>
   public sealed class CreateTodoListRequestDto
   {

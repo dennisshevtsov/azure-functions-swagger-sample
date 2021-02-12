@@ -20,6 +20,8 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   {
     private readonly ITodoService _todoService;
 
+    /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CompleteTodoListTaskFunction"/> class.</summary>
+    /// <param name="todoService">An object that provides a simple API to execute operation within objects of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListDocument"/> class.</param>
     public CompleteTodoListTaskFunction(ITodoService todoService)
       => _todoService = todoService ?? throw new ArgumentNullException(nameof(todoService));
 

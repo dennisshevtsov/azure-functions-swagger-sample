@@ -9,6 +9,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using System.Threading.Tasks;
 
   using Microsoft.AspNetCore.Http;
+  using Microsoft.AspNetCore.Mvc;
   using Microsoft.Azure.WebJobs;
 
   using AzureFunctionsSwaggerSample.Api.Documents;
@@ -23,6 +24,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
 
     /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.UpdateTodoListFunction"/> class.</summary>
     /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
+    /// <param name="todoService">An object that provides a simple API to execute operation within objects of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListDocument"/> class.</param>
     public UpdateTodoListFunction(
       ISerializationService serializationService,
       ITodoService todoService)
@@ -42,8 +44,9 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <verb>put</verb>
     /// <url>http://localhost:7071/api/todo/{todoListId}</url>
     /// <response code="204"></response>
+    /// <response code="400"></response>
     [FunctionName(nameof(UpdateTodoListFunction))]
-    public async Task ExecuteAsync(
+    public async Task<IActionResult> ExecuteAsync(
       [HttpTrigger("put", Route = "todo/{todoListId}")] HttpRequest request,
       [CosmosDB("%DatabaseId%", "%CollectionId%",
         ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
@@ -52,10 +55,17 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       Guid todoListId,
       CancellationToken cancellationToken)
     {
+      if (document == null)
+      {
+        return new BadRequestResult();
+      }
+
       var command = await _serializationService.DeserializeAsync<UpdateTodoListRequestDto>(
         request.Body, cancellationToken);
 
       await _todoService.UpdateTodoListAsync(command, document, collector, cancellationToken);
+
+      return new NoContentResult();
     }
   }
 }

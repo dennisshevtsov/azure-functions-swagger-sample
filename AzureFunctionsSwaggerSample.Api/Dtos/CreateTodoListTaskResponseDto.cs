@@ -9,6 +9,8 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
   /// <summary>Represents detail of a TODO list task.</summary>
   public sealed class CreateTodoListTaskResponseDto
   {
+    /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskResponseDto"/> class.</summary>
+    /// <param name="todoListTaskId">A value that represents an ID of a TODO list task.</param>
     public CreateTodoListTaskResponseDto(Guid todoListTaskId) => TodoListTaskId = todoListTaskId;
 
     /// <summary>Gets/sets a value that represents and ID of a TODO list task.</summary>
