@@ -15,7 +15,8 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 
   public interface ITodoService
   {
-    public Task<TodoListDocument> CreateTodoListAsync(
+    public Task CreateTodoListAsync(
+      Guid todoListId,
       CreateTodoListRequestDto command,
       IAsyncCollector<TodoListDocument> collector,
       CancellationToken cancellationToken);
@@ -26,7 +27,8 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       IAsyncCollector<TodoListDocument> collector,
       CancellationToken cancellationToken);
 
-    public Task<TodoListTaskDocument> CreateTodoListTaskAsync(
+    public Task CreateTodoListTaskAsync(
+      Guid todoListTaskId,
       CreateTodoListTaskRequestDto command,
       TodoListDocument todoListDocument,
       IAsyncCollector<TodoListDocument> collector,

@@ -5,6 +5,7 @@
 namespace AzureFunctionsSwaggerSample.Api.Services
 {
   using System;
+  using System.Collections.Generic;
   using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
@@ -13,26 +14,24 @@ namespace AzureFunctionsSwaggerSample.Api.Services
 
   using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
-  using System.Collections.Generic;
-
+  
   public sealed class TodoService : ITodoService
   {
-    public async Task<TodoListDocument> CreateTodoListAsync(
+    public Task CreateTodoListAsync(
+      Guid todoListId,
       CreateTodoListRequestDto command,
       IAsyncCollector<TodoListDocument> collector,
       CancellationToken cancellationToken)
     {
       var document = new TodoListDocument
       {
-        TodoListId = Guid.NewGuid(),
+        TodoListId = todoListId,
         PartitionId = nameof(TodoListDocument),
         Title = command.Title,
         Description = command.Description,
       };
 
-      await collector.AddAsync(document, cancellationToken);
-
-      return document;
+      return collector.AddAsync(document, cancellationToken);
     }
 
     public Task UpdateTodoListAsync(
@@ -47,7 +46,8 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       return collector.AddAsync(document, cancellationToken);
     }
 
-    public async Task<TodoListTaskDocument> CreateTodoListTaskAsync(
+    public Task CreateTodoListTaskAsync(
+      Guid todoListTaskId,
       CreateTodoListTaskRequestDto command,
       TodoListDocument todoListDocument,
       IAsyncCollector<TodoListDocument> collector,
@@ -55,7 +55,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
     {
       var todoListTaskDocument = new TodoListTaskDocument
       {
-        TaskId = Guid.NewGuid(),
+        TaskId = todoListTaskId,
         Title = command.Title,
         Description = command.Description,
         Deadline = command.Deadline,
@@ -66,9 +66,7 @@ namespace AzureFunctionsSwaggerSample.Api.Services
       tasks.Add(todoListTaskDocument);
       todoListDocument.Tasks = tasks;
 
-      await collector.AddAsync(todoListDocument, cancellationToken);
-
-      return todoListTaskDocument;
+      return collector.AddAsync(todoListDocument, cancellationToken);
     }
 
     public Task CompleteTodoListTaskAsync(

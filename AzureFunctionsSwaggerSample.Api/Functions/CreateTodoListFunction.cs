@@ -11,9 +11,9 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs;
 
+  using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
-  using AzureFunctionsSwaggerSample.Api.Documents;
 
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CreateTodoListFunction
@@ -48,12 +48,13 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
         Id = "todoListId", PartitionKey = nameof(TodoListDocument))] IAsyncCollector<TodoListDocument> collector,
       CancellationToken cancellationToken)
     {
+      var todoListId = Guid.NewGuid();
       var command = await _serializationService.DeserializeAsync<CreateTodoListRequestDto>(
         request.Body, cancellationToken);
-      var document = await _todoService.CreateTodoListAsync(command, collector, cancellationToken);
-      var response = CreateTodoListResponseDto.FromDocument(document);
 
-      return response;
+      await _todoService.CreateTodoListAsync(todoListId, command, collector, cancellationToken);
+
+      return new CreateTodoListResponseDto(todoListId);
     }
   }
 }

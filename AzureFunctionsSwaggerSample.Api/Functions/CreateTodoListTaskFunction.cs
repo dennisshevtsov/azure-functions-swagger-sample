@@ -5,8 +5,6 @@
 namespace AzureFunctionsSwaggerSample.Api.Functions
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
 
@@ -54,13 +52,14 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       Guid todoListId,
       CancellationToken cancellationToken)
     {
+      var todoListTaskId = Guid.NewGuid();
       var command = await _serializationService.DeserializeAsync<CreateTodoListTaskRequestDto>(
         request.Body, cancellationToken);
-      var todoListTaskDocument = await _todoService.CreateTodoListTaskAsync(
-        command, todoListDocument, collector, cancellationToken);
-      var response = CreateTodoListTaskResponseDto.FromDocument(todoListTaskDocument);
 
-      return response;
+      await _todoService.CreateTodoListTaskAsync(
+        todoListTaskId, command, todoListDocument, collector, cancellationToken);
+
+      return new CreateTodoListTaskResponseDto(todoListTaskId);
     }
   }
 }
