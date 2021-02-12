@@ -7,6 +7,8 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
   using System;
 
   using AzureFunctionsSwaggerSample.Api.Documents;
+  using Newtonsoft.Json;
+  using Newtonsoft.Json.Converters;
 
   /// <summary>Represents data to create a TODO list task.</summary>
   public sealed class CreateTodoListTaskRequestDto
@@ -18,6 +20,7 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
     public string Description { get; set; }
 
     /// <summary>Gets/sets a value that represents a deadline of a TODO list task.</summary>
+    //[JsonConverter(typeof(IsoDateTimeConverter), "dd/MM/yyyy")]
     public DateTime Deadline { get; set; }
 
     /// <summary>Converts an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskRequestDto"/> class to an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListTaskDocument"/> class.</summary>

@@ -18,17 +18,6 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
   /// <summary>Provides a method to handle an HTTP request.</summary>
   public sealed class CompleteTodoListTaskFunction
   {
-    private readonly ISerializationService _serializationService;
-
-    /// <summary>Initializes a new instance of the <see cref="AzureFunctionsSwaggerSample.Api.Functions.CompleteTodoListTaskFunction"/> class.</summary>
-    /// <param name="todoService">An object that provides a simple API to operate within the TODO list domain.</param>
-    /// <param name="serializationService">An object that provides a simple API to serialize/deserialize an object.</param>
-    public CompleteTodoListTaskFunction(
-      ISerializationService serializationService)
-    {
-      _serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
-    }
-
     /// <summary>CompleteTodoListTaskFunction</summary>
     /// <group>TODO List Task</group>
     /// <remarks>Marks a TODO list task as completed.</remarks>
@@ -46,15 +35,16 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       [CosmosDB("%DatabaseId%", "%CollectionId%",
         ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
       [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
-        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
+        Id = "{todoListId}", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
       Guid todoListId,
       Guid taskId,
       CancellationToken cancellationToken)
     {
-      var command = await _serializationService.DeserializeAsync<CompleteTodoListTaskRequestDto>(
-        request.Body, cancellationToken);
+      var command = new CompleteTodoListTaskRequestDto
+      {
+        TaskId = taskId,
+      };
 
-      command.TaskId = taskId;
       command.UpdateDocument(todoListDocument);
 
       await collector.AddAsync(todoListDocument, cancellationToken);

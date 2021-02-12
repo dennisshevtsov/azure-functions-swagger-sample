@@ -39,15 +39,15 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     /// <param name="command" required="true" in="body"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskRequestDto"/>An object that represents data to update a TODO list.</param>
     /// <returns>An object that represents an asynchronous operation.</returns>
     /// <verb>post</verb>
-    /// <url>http://localhost:7071/api/todo/{todoListId}</url>
+    /// <url>http://localhost:7071/api/todo/{todoListId}/task</url>
     /// <response code="200"><see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskResponseDto"/>An object that represents detail of a TODO list task.</response>
     [FunctionName(nameof(CreateTodoListTaskFunction))]
     public async Task<CreateTodoListTaskResponseDto> ExecuteAsync(
-      [HttpTrigger("post", Route = "todo/{todoListId}")] HttpRequest request,
+      [HttpTrigger("post", Route = "todo/{todoListId}/task")] HttpRequest request,
       [CosmosDB("%DatabaseId%", "%CollectionId%",
         ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
       [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
-        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
+        Id = "{todoListId}", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
       Guid todoListId,
       CancellationToken cancellationToken)
     {

@@ -30,7 +30,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
     public GetTodoListResponseDto Execute(
       [HttpTrigger("get", Route = "todo/{todoListId}")] HttpRequest request,
       [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
-        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] GetTodoListResponseDto response,
+        Id = "{todoListId}", PartitionKey = nameof(TodoListDocument))] GetTodoListResponseDto response,
       Guid todoListId) => response;
   }
 }

@@ -45,7 +45,7 @@ namespace AzureFunctionsSwaggerSample.Api.Functions
       [CosmosDB("%DatabaseId%", "%CollectionId%",
         ConnectionStringSetting = "ConnectionString")] IAsyncCollector<TodoListDocument> collector,
       [CosmosDB("%DatabaseId%", "%CollectionId%", ConnectionStringSetting = "ConnectionString",
-        Id = "todoListId", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
+        Id = "{todoListId}", PartitionKey = nameof(TodoListDocument))] TodoListDocument todoListDocument,
       Guid todoListId,
       CancellationToken cancellationToken)
     {

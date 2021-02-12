@@ -12,7 +12,7 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
   public sealed class CreateTodoListTaskResponseDto
   {
     /// <summary>Gets/sets a value that represents and ID of a TODO list task.</summary>
-    public Guid TaskId { get; set; }
+    public Guid TodoListTaskId { get; set; }
 
     /// <summary>Converts an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListTaskDocument"/> class to an instance of the <see cref="AzureFunctionsSwaggerSample.Api.Dtos.CreateTodoListTaskResponseDto"/> class.</summary>
     /// <param name="document">An instance of the <see cref="AzureFunctionsSwaggerSample.Api.Documents.TodoListTaskDocument"/> class</param>
@@ -20,7 +20,7 @@ namespace AzureFunctionsSwaggerSample.Api.Dtos
     public static CreateTodoListTaskResponseDto FromDocument(TodoListTaskDocument document)
       => new CreateTodoListTaskResponseDto
       {
-        TaskId = document.TaskId,
+        TodoListTaskId = document.TaskId,
       };
   }
 }
