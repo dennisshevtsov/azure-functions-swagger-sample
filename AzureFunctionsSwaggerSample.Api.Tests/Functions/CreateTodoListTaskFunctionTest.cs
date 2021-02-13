@@ -39,6 +39,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     public async Task Test()
     {
       var todoListId = Guid.NewGuid();
+
       var httpRequestMock = new Mock<HttpRequest>();
 
       var requestDto = new CreateTodoListTaskRequestDto
@@ -51,30 +52,6 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(requestDto);
 
-      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
-
-      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
-                   .Returns((TodoListDocument todoListDocument, CancellationToken cancellationToken) =>
-                   {
-                     if (todoListDocument == null ||
-                         todoListDocument.Tasks == null)
-                     {
-                       Assert.Fail();
-                     }
-
-                     var todoListTaskDocument = todoListDocument.Tasks.Last();
-
-                     if (todoListTaskDocument.Title != requestDto.Title ||
-                         todoListTaskDocument.Description != requestDto.Description ||
-                         todoListTaskDocument.Deadline != requestDto.Deadline ||
-                         todoListTaskDocument.Completed)
-                     {
-                       Assert.Fail();
-                     }
-
-                     return Task.CompletedTask;
-                   });
-
       var todoListDocument = new TodoListDocument
       {
         TodoListId = todoListId,
@@ -82,10 +59,12 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
         Description = CreateTodoListTaskFunctionTest.RandomToken(),
       };
 
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
       await _function.ExecuteAsync(httpRequestMock.Object, collectorMock.Object, todoListDocument, todoListId, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListTaskRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
+      _todoServiceMock.Verify(service => service.CreateTodoListTaskAsync(It.IsAny<Guid>(), It.IsAny<CreateTodoListTaskRequestDto>(), It.IsAny<TodoListDocument>(), It.IsAny<IAsyncCollector<TodoListDocument>>(), It.IsAny<CancellationToken>()));
     }
 
     private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");

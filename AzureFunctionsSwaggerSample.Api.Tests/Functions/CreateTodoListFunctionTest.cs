@@ -38,6 +38,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
     public async Task Test()
     {
       var httpRequestMock = new Mock<HttpRequest>();
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
 
       var requestDto = new CreateTodoListRequestDto
       {
@@ -48,25 +49,10 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       _serializationServiceMock.Setup(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                                .ReturnsAsync(requestDto);
 
-      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
-
-      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
-                   .Returns((TodoListDocument document, CancellationToken cancellationToken) =>
-                   {
-                     if (document.TodoListId == default ||
-                         document.Title != requestDto.Title ||
-                         document.Description != requestDto.Description)
-                     {
-                       Assert.Fail();
-                     }
-
-                     return Task.CompletedTask;
-                   });
-
       await _function.ExecuteAsync(httpRequestMock.Object, collectorMock.Object, CancellationToken.None);
 
       _serializationServiceMock.Verify(service => service.DeserializeAsync<CreateTodoListRequestDto>(It.IsAny<Stream>(), It.IsAny<CancellationToken>()));
-      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
+      _todoServiceMock.Verify(service => service.CreateTodoListAsync(It.IsAny<Guid>(), It.IsAny<CreateTodoListRequestDto>(), It.IsAny<IAsyncCollector<TodoListDocument>>(), It.IsAny<CancellationToken>()));
     }
 
     private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");
