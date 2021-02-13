@@ -40,6 +40,19 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
       collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
     }
 
+    [TestMethod]
+    public async Task Test_UpdateTodoListAsync()
+    {
+      var command = new UpdateTodoListRequestDto();
+      var document = new TodoListDocument();
+      var collectorMock = TodoServiceTest.GetCollectorMock(command);
+
+      await _todoService.UpdateTodoListAsync(
+        command, document, collectorMock.Object, CancellationToken.None);
+
+      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
+    }
+
     private static Mock<IAsyncCollector<TodoListDocument>> GetCollectorMock(Guid todoListId, CreateTodoListRequestDto command)
     {
       var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
@@ -52,6 +65,29 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
                        Assert.Fail("document.TodoListId != todoListId");
                      }
 
+                     if (document.Title != command.Title)
+                     {
+                       Assert.Fail("document.Title != command.Title");
+                     }
+
+                     if (document.Description != command.Description)
+                     {
+                       Assert.Fail("document.Description != command.Description");
+                     }
+
+                     return Task.CompletedTask;
+                   });
+
+      return collectorMock;
+    }
+
+    private static Mock<IAsyncCollector<TodoListDocument>> GetCollectorMock(UpdateTodoListRequestDto command)
+    {
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
+      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
+                   .Returns((TodoListDocument document, CancellationToken cancellationToken) =>
+                   {
                      if (document.Title != command.Title)
                      {
                        Assert.Fail("document.Title != command.Title");
