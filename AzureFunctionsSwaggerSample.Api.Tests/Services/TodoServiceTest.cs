@@ -15,6 +15,7 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
   using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
+  using System.Linq;
 
   [TestClass]
   public sealed class TodoServiceTest
@@ -49,6 +50,20 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
 
       await _todoService.UpdateTodoListAsync(
         command, document, collectorMock.Object, CancellationToken.None);
+
+      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
+    }
+
+    [TestMethod]
+    public async Task Test_CreateTodoListTaskAsync()
+    {
+      var todoListTaskId = Guid.NewGuid();
+      var command = new CreateTodoListTaskRequestDto();
+      var document = new TodoListDocument();
+      var collectorMock = TodoServiceTest.GetCollectorMock(todoListTaskId, command);
+
+      await _todoService.CreateTodoListTaskAsync(
+        todoListTaskId, command, document, collectorMock.Object, CancellationToken.None);
 
       collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
     }
@@ -96,6 +111,51 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
                      if (document.Description != command.Description)
                      {
                        Assert.Fail("document.Description != command.Description");
+                     }
+
+                     return Task.CompletedTask;
+                   });
+
+      return collectorMock;
+    }
+
+    private static Mock<IAsyncCollector<TodoListDocument>> GetCollectorMock(Guid todoListTaskId, CreateTodoListTaskRequestDto command)
+    {
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
+      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
+                   .Returns((TodoListDocument document, CancellationToken cancellationToken) =>
+                   {
+                     if (document.Tasks == null)
+                     {
+                       Assert.Fail("document.Tasks == null");
+                     }
+
+                     var task = document.Tasks.LastOrDefault();
+
+                     if (task == null)
+                     {
+                       Assert.Fail("task == null");
+                     }
+
+                     if (task.TaskId == default)
+                     {
+                       Assert.Fail("task.TaskId == default");
+                     }
+
+                     if (task.Title != command.Title)
+                     {
+                       Assert.Fail("task.Title == command.Title");
+                     }
+
+                     if (task.Description != command.Description)
+                     {
+                       Assert.Fail("task.Description == command.Description");
+                     }
+
+                     if (task.Deadline != command.Deadline)
+                     {
+                       Assert.Fail("task.Deadline == command.Deadline");
                      }
 
                      return Task.CompletedTask;
