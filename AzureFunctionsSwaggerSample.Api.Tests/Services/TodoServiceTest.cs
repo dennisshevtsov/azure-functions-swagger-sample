@@ -5,6 +5,7 @@
 namespace AzureFunctionsSwaggerSample.Api.Tests.Services
 {
   using System;
+  using System.Linq;
   using System.Threading;
   using System.Threading.Tasks;
 
@@ -15,7 +16,6 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
   using AzureFunctionsSwaggerSample.Api.Documents;
   using AzureFunctionsSwaggerSample.Api.Dtos;
   using AzureFunctionsSwaggerSample.Api.Services;
-  using System.Linq;
 
   [TestClass]
   public sealed class TodoServiceTest
