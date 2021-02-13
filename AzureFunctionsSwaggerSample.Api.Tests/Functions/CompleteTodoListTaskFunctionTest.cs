@@ -38,30 +38,6 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
       var todoListTaskId = Guid.NewGuid();
       var httpRequestMock = new Mock<HttpRequest>();
 
-      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
-
-      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
-                   .Returns((TodoListDocument todoListDocument, CancellationToken cancellationToken) =>
-                   {
-                     if (todoListDocument == null ||
-                         todoListDocument.Tasks == null)
-                     {
-                       Assert.Fail();
-                     }
-
-                     var todoListTaskDocument = todoListDocument.Tasks.FirstOrDefault(
-                       document => document.TaskId == todoListTaskId);
-
-                     if (todoListTaskDocument == null ||
-                         todoListTaskDocument.TaskId != todoListTaskId ||
-                         !todoListTaskDocument.Completed)
-                     {
-                       Assert.Fail();
-                     }
-
-                     return Task.CompletedTask;
-                   });
-
       var document = new TodoListDocument
       {
         TodoListId = todoListId,
@@ -84,6 +60,8 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
         },
       };
 
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
       await _function.ExecuteAsync(
         httpRequestMock.Object,
         collectorMock.Object,
@@ -94,7 +72,6 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 
       _todoServiceMock.Verify(service => service.CompleteTodoListTaskAsync(
         It.IsAny<Guid>(), It.IsAny<TodoListDocument>(), It.IsAny<IAsyncCollector<TodoListDocument>>(), It.IsAny<CancellationToken>()));
-      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
     }
 
     private static string RandomToken() => Guid.NewGuid().ToString().Replace("-", "");

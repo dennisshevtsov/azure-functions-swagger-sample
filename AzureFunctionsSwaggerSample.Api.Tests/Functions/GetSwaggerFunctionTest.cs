@@ -12,9 +12,9 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
   using Microsoft.Azure.WebJobs;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
-  
+
   using AzureFunctionsSwaggerSample.Api.Functions;
-  
+
   [TestClass]
   public sealed class GetSwaggerFunctionTest
   {
@@ -58,8 +58,13 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Functions
 
       if (!paths.TryGetProperty("/api/todo/{todoListId}", out var todoByIdPath) ||
           !todoByIdPath.TryGetProperty("get", out _) ||
-          !todoByIdPath.TryGetProperty("post", out _) ||
           !todoByIdPath.TryGetProperty("put", out _))
+      {
+        Assert.Fail();
+      }
+
+      if (!paths.TryGetProperty("/api/todo/{todoListId}/task", out var todoByIdTaskPath) ||
+          !todoByIdTaskPath.TryGetProperty("post", out _))
       {
         Assert.Fail();
       }
