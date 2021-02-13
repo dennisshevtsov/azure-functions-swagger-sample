@@ -68,6 +68,28 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
       collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
     }
 
+    [TestMethod]
+    public async Task Test_CompleteTodoListTaskAsync()
+    {
+      var todoListTaskId = Guid.NewGuid();
+      var document = new TodoListDocument
+      {
+        Tasks = new[]
+        {
+          new TodoListTaskDocument
+          {
+            TaskId = todoListTaskId,
+          },
+        },
+      };
+      var collectorMock = TodoServiceTest.GetCollectorMock(todoListTaskId);
+
+      await _todoService.CompleteTodoListTaskAsync(
+        todoListTaskId, document, collectorMock.Object, CancellationToken.None);
+
+      collectorMock.Verify(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()));
+    }
+
     private static Mock<IAsyncCollector<TodoListDocument>> GetCollectorMock(Guid todoListId, CreateTodoListRequestDto command)
     {
       var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
@@ -156,6 +178,37 @@ namespace AzureFunctionsSwaggerSample.Api.Tests.Services
                      if (task.Deadline != command.Deadline)
                      {
                        Assert.Fail("task.Deadline == command.Deadline");
+                     }
+
+                     return Task.CompletedTask;
+                   });
+
+      return collectorMock;
+    }
+
+    private static Mock<IAsyncCollector<TodoListDocument>> GetCollectorMock(Guid todoListTaskId)
+    {
+      var collectorMock = new Mock<IAsyncCollector<TodoListDocument>>();
+
+      collectorMock.Setup(collector => collector.AddAsync(It.IsAny<TodoListDocument>(), It.IsAny<CancellationToken>()))
+                   .Returns((TodoListDocument todoListDocument, CancellationToken cancellationToken) =>
+                   {
+                     if (todoListDocument.Tasks == null)
+                     {
+                       Assert.Fail("todoListDocument.Tasks == null");
+                     }
+
+                     var todoListTaskDocument = todoListDocument.Tasks.FirstOrDefault(
+                       document => document.TaskId == todoListTaskId);
+
+                     if (todoListTaskDocument == null)
+                     {
+                       Assert.Fail("todoListTaskDocument == null");
+                     }
+
+                     if (todoListTaskDocument.Completed == false)
+                     {
+                       Assert.Fail("todoListTaskDocument.Completed == false");
                      }
 
                      return Task.CompletedTask;
